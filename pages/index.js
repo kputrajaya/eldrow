@@ -10,18 +10,18 @@ import { solve } from '../utils/solver';
 
 export default function Home() {
   const router = useRouter();
-  const [mode, setMode] = useState('wordle');
+  const [mode, setMode] = useState('');
   const [guesses, setGuesses] = useState([]);
   const [counter, setCounter] = useState(0);
   const [result, setResult] = useState('');
 
   useEffect(() => {
-    setMode(localStorage.getItem('mode') || 'wordle');
+    setMode(localStorage.getItem('mode') || Object.keys(SOLVER_FIRST_WORD)[0]);
   }, []);
 
   useEffect(() => {
     const newGuesses = Array.from(Array(ATTEMPT_COUNT)).map(() => ['', '']);
-    newGuesses[0][0] = SOLVER_FIRST_WORD[mode];
+    newGuesses[0][0] = SOLVER_FIRST_WORD[mode] || '';
     setGuesses(newGuesses);
     setCounter(0);
     setResult('');
