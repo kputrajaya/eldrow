@@ -9,10 +9,10 @@ export default function Keyboard({ result, setResult, onSubmit }) {
   };
 
   return (
-    <div className="py-4 text-sm font-bold uppercase border-t border-slate-500 shrink-0 select-none">
+    <div className="py-4 text-sm font-bold uppercase border-t border-zinc-500 shrink-0 select-none">
       <div className="grid grid-flow-col gap-x-4">
         <div
-          className="shrink-0 py-5 text-center bg-slate-500 hidden md:block rounded-lg cursor-pointer"
+          className="shrink-0 py-5 text-center bg-zinc-500 hidden md:block rounded-lg cursor-pointer"
           onClick={() => onSubmit()}
         >
           Enter
@@ -30,26 +30,23 @@ export default function Keyboard({ result, setResult, onSubmit }) {
           Yellow
         </div>
         <div
-          className="col-span-2 py-5 text-center bg-slate-700 rounded-lg cursor-pointer"
+          className="col-span-2 py-5 text-center bg-zinc-700 rounded-lg cursor-pointer"
           onClick={() => addLetter('B')}
         >
           Black
         </div>
         <div
-          className="shrink-0 py-5 text-center bg-slate-500 hidden md:block rounded-lg cursor-pointer"
+          className="shrink-0 py-5 text-center bg-zinc-500 hidden md:block rounded-lg cursor-pointer"
           onClick={() => deleteLetter()}
         >
           Delete
         </div>
       </div>
       <div className="grid grid-cols-2 gap-x-4 mt-4 md:hidden">
-        <div className="shrink-0 py-5 text-center bg-slate-500 rounded-lg cursor-pointer" onClick={() => onSubmit()}>
+        <div className="shrink-0 py-5 text-center bg-zinc-500 rounded-lg cursor-pointer" onClick={() => onSubmit()}>
           Enter
         </div>
-        <div
-          className="shrink-0 py-5 text-center bg-slate-500 rounded-lg cursor-pointer"
-          onClick={() => deleteLetter()}
-        >
+        <div className="shrink-0 py-5 text-center bg-zinc-500 rounded-lg cursor-pointer" onClick={() => deleteLetter()}>
           Delete
         </div>
       </div>
