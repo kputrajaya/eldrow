@@ -18,7 +18,7 @@ export default function Keyboard({ onChange, onSubmit }) {
 
   return (
     <div className="py-4 text-sm font-bold uppercase border-t border-slate-500 shrink-0 select-none">
-      <div className="grid grid-flow-col gap-x-2">
+      <div className="grid grid-flow-col gap-x-4">
         <div
           className="shrink-0 py-5 text-center bg-slate-500 hidden md:block rounded-lg cursor-pointer"
           onClick={() => submit()}
