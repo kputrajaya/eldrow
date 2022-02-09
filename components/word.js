@@ -22,7 +22,7 @@ export default function Word({ word, colors, highlight }) {
   );
 
   return (
-    <div className={`my-2 flex-1 flex text-2xl font-bold text-center uppercase`}>
+    <div className={`my-2 flex-1 flex text-xl lg:text-2xl font-bold text-center uppercase`}>
       {blocks.map((block, index) => (
         <div className={`${block.class} mx-2 flex-1 flex justify-center items-center border-2`} key={index}>
           {block.char}

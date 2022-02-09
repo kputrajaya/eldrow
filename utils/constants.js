@@ -1,6 +1,36 @@
 export const WORD_LENGTH = 5;
+export const ATTEMPT_COUNT = 6;
 
-export const WORD_POOL = {
+export const ALPHABETS = [
+  'a',
+  'b',
+  'c',
+  'd',
+  'e',
+  'f',
+  'g',
+  'h',
+  'i',
+  'j',
+  'k',
+  'l',
+  'm',
+  'n',
+  'o',
+  'p',
+  'q',
+  'r',
+  's',
+  't',
+  'u',
+  'v',
+  'w',
+  'x',
+  'y',
+  'z',
+];
+
+export const SOLVER_WORD_POOL = {
   wordle: [
     'cigar',
     'rebut',
@@ -21232,8 +21262,7 @@ export const WORD_POOL = {
     'zumba',
   ],
 };
-
-export const VALID_WORDS = {
+export const SOLVER_VALID_WORDS = {
   wordle: [
     'cigar',
     'rebut',
@@ -23552,39 +23581,9 @@ export const VALID_WORDS = {
     'shave',
   ],
 };
-
-export const FIRST_WORD = {
-  katla: 'teras',
+export const SOLVER_FIRST_WORD = {
   wordle: 'crane',
+  katla: 'teras',
 };
-
-export const ALPHABETS = [
-  'a',
-  'b',
-  'c',
-  'd',
-  'e',
-  'f',
-  'g',
-  'h',
-  'i',
-  'j',
-  'k',
-  'l',
-  'm',
-  'n',
-  'o',
-  'p',
-  'q',
-  'r',
-  's',
-  't',
-  'u',
-  'v',
-  'w',
-  'x',
-  'y',
-  'z',
-];
-
-export const BASE_SCORE = 15;
+export const SOLVER_EXPLORE_THRESHOLD = 5;
+export const SOLVER_BASE_SCORE = 15;

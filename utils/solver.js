@@ -1,8 +1,15 @@
-import { ALPHABETS, BASE_SCORE, VALID_WORDS, WORD_POOL } from '../utils/constants';
+import {
+  ALPHABETS,
+  SOLVER_BASE_SCORE,
+  SOLVER_EXPLORE_THRESHOLD,
+  SOLVER_VALID_WORDS,
+  SOLVER_WORD_POOL,
+  WORD_LENGTH,
+} from '../utils/constants';
 
 export const solve = (mode, guesses) => {
-  const wordPool = WORD_POOL[mode];
-  let validWords = VALID_WORDS[mode] || wordPool;
+  const wordPool = SOLVER_WORD_POOL[mode];
+  let validWords = SOLVER_VALID_WORDS[mode] || wordPool;
   const unguessedChars = new Set(ALPHABETS);
   const correctChars = new Set();
 
@@ -29,12 +36,12 @@ export const solve = (mode, guesses) => {
   });
   validWords = validWords.filter((word) => conds.every((cond) => cond(word)));
 
-  // Only 1 or 2 option(s)
+  // Only 1 or 2 option(s) left
   if (validWords.length <= 2) {
     return validWords[0];
   }
 
-  const isExploring = validWords.length > 5;
+  const isExploring = validWords.length > SOLVER_EXPLORE_THRESHOLD;
   let topGuesses;
 
   // From word pool, top unguessed char occurrences
@@ -49,14 +56,14 @@ export const solve = (mode, guesses) => {
     });
     const topUnguessedChars = Object.entries(unguessedCharCounter)
       .sort(([, a], [, b]) => b - a)
-      .slice(0, BASE_SCORE)
+      .slice(0, SOLVER_BASE_SCORE)
       .map(([char]) => char);
     topGuesses = wordPool
       .map((word) => [
         word,
         [...new Set(Array.from(word))].reduce((acc, char) => {
           const charPos = topUnguessedChars.indexOf(char);
-          const score = charPos >= 0 ? BASE_SCORE - charPos : 0;
+          const score = charPos >= 0 ? SOLVER_BASE_SCORE - charPos : 0;
           return acc + score;
         }, 0),
       ])
@@ -65,7 +72,10 @@ export const solve = (mode, guesses) => {
   // From valid words, top char position probability
   else {
     const unguessedCharCounter = Array.from(unguessedChars).reduce(
-      (acc, char) => ({ ...acc, [char]: { 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 } }),
+      (acc, char) => ({
+        ...acc,
+        [char]: Object.fromEntries(Array.from(Array(WORD_LENGTH)).map((_, index) => [index, 0])),
+      }),
       {}
     );
     validWords.forEach((word) => {

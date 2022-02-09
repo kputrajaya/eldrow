@@ -5,44 +5,50 @@ import { useRouter } from 'next/router';
 import Header from '../components/header';
 import Keyboard from '../components/keyboard';
 import Word from '../components/word';
-import { FIRST_WORD } from '../utils/constants';
+import { SOLVER_FIRST_WORD, WORD_LENGTH, ATTEMPT_COUNT } from '../utils/constants';
 import { solve } from '../utils/solver';
-import next from 'next';
 
 export default function Home() {
   const router = useRouter();
-  const [mode, setMode] = useState('katla');
+  const [mode, setMode] = useState('wordle');
   const [guesses, setGuesses] = useState([]);
   const [counter, setCounter] = useState(0);
+  const [result, setResult] = useState('');
 
   useEffect(() => {
-    setGuesses([
-      [FIRST_WORD[mode], ''],
-      ['', ''],
-      ['', ''],
-      ['', ''],
-      ['', ''],
-      ['', ''],
-    ]);
+    setMode(localStorage.getItem('mode') || 'wordle');
+  }, []);
+
+  useEffect(() => {
+    const newGuesses = Array.from(Array(ATTEMPT_COUNT)).map(() => ['', '']);
+    newGuesses[0][0] = SOLVER_FIRST_WORD[mode];
+    setGuesses(newGuesses);
     setCounter(0);
+    setResult('');
   }, [mode]);
 
-  const onKeyboardChange = (result) => {
-    console.debug('kb change', result);
-    const newGuesses = [...guesses];
-    newGuesses[counter] = [guesses[counter][0], result];
-    setGuesses(newGuesses);
+  const setModeSideEffect = (newMode) => {
+    localStorage.setItem('mode', newMode);
+    setMode(newMode);
   };
-  const onKeyboardSubmit = () => {
-    console.debug('kb submit');
-    if (Array.from(guesses[counter][1]).every((char) => char === 'G')) {
-      alert(`Congrats! Solved in ${counter + 1} attempt(s)`);
+  const setResultSideEffect = (newResult) => {
+    const newGuesses = [...guesses];
+    newGuesses[counter][1] = newResult;
+    setGuesses(newGuesses);
+    setResult(newResult);
+  };
+  const onSubmit = () => {
+    if (result.length !== WORD_LENGTH) return;
+    if (Array.from(result).every((char) => char === 'G')) {
+      alert(`Congrats! Solved in ${counter + 1} attempt${counter ? 's' : ''}.`);
+      router.reload(window.location.pathname);
       return;
     }
     const nextGuess = solve(mode, guesses);
     if (!nextGuess) {
-      alert('No possible option found!');
+      alert('No possible options found!');
       router.reload(window.location.pathname);
+      return;
     }
 
     const newCounter = counter + 1;
@@ -50,6 +56,7 @@ export default function Home() {
     newGuesses[newCounter] = [nextGuess, ''];
     setGuesses(newGuesses);
     setCounter(newCounter);
+    setResult('');
   };
 
   return (
@@ -57,19 +64,15 @@ export default function Home() {
       <Head>
         <title>Eldrow - Wordle/Katla Solver</title>
       </Head>
-      {mode ? (
-        <div className="max-w-screen-md h-screen px-4 mx-auto flex flex-col">
-          <Header />
-          <div className="min-h-0 -mx-2 py-2 overflow-hidden grow flex flex-col">
-            {guesses.map((guess, index) => (
-              <Word word={guess[0]} colors={guess[1]} highlight={index === counter} key={index} />
-            ))}
-          </div>
-          <Keyboard onChange={onKeyboardChange} onSubmit={onKeyboardSubmit} />
+      <div className="max-w-screen-md h-screen px-4 mx-auto flex flex-col">
+        <Header mode={mode} setMode={setModeSideEffect} />
+        <div className="min-h-0 -mx-2 py-2 overflow-hidden grow flex flex-col">
+          {guesses.map((guess, index) => (
+            <Word word={guess[0]} colors={guess[1]} highlight={index === counter} key={index} />
+          ))}
         </div>
-      ) : (
-        <h1 className="text-3xl font-bold underline">Hello world!</h1>
-      )}
+        <Keyboard result={result} setResult={setResultSideEffect} onSubmit={onSubmit} />
+      </div>
     </>
   );
 }
