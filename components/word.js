@@ -13,7 +13,7 @@ export default function Word({ word, result, highlight }) {
             : result[index] === 'Y'
             ? 'bg-yellow-700 border-yellow-700'
             : result[index] === 'B'
-            ? 'bg-zinc-700 border-zinc-700'
+            ? 'bg-slate-700 border-slate-700'
             : highlight
             ? 'border-slate-50'
             : 'border-slate-500',

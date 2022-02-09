@@ -30,7 +30,7 @@ export default function Keyboard({ result, setResult, onSubmit }) {
           Yellow
         </div>
         <div
-          className="col-span-2 py-5 text-center bg-zinc-700 rounded-lg cursor-pointer"
+          className="col-span-2 py-5 text-center bg-slate-700 rounded-lg cursor-pointer"
           onClick={() => addLetter('B')}
         >
           Black
