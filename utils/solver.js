@@ -16,60 +16,11 @@ export const solve = (mode, guesses) => {
     return validWords[0];
   }
 
+  // Get guess using 2 approaches
   const isExploring = validWords.length > SOLVER_EXPLORE_THRESHOLD;
-  let topWords;
-
-  // From word pool, top unguessed char occurrences
-  if (isExploring) {
-    const unguessedCharCounter = Array.from(unguessedChars).reduce((acc, char) => ({ ...acc, [char]: 0 }), {});
-    validWords.forEach((word) => {
-      Array.from(word).forEach((char) => {
-        if (char in unguessedCharCounter) {
-          unguessedCharCounter[char]++;
-        }
-      });
-    });
-    const topUnguessedChars = Object.entries(unguessedCharCounter)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, SOLVER_BASE_SCORE)
-      .map(([char]) => char);
-    topWords = wordPool.map((word) => [
-      word,
-      [...new Set(Array.from(word))].reduce((acc, char) => {
-        const charPos = topUnguessedChars.indexOf(char);
-        const score = charPos >= 0 ? SOLVER_BASE_SCORE - charPos : 0;
-        return acc + score;
-      }, 0),
-    ]);
-  }
-  // From valid words, top char position probability
-  else {
-    const unguessedCharCounter = Array.from(unguessedChars).reduce(
-      (acc, char) => ({
-        ...acc,
-        [char]: Object.fromEntries(Array.from(Array(WORD_LENGTH)).map((_, index) => [index, 0])),
-      }),
-      {}
-    );
-    validWords.forEach((word) => {
-      Array.from(word).forEach((char, index) => {
-        if (char in unguessedCharCounter) {
-          unguessedCharCounter[char][index]++;
-        }
-      });
-    });
-    topWords = validWords.map((word) => [
-      word,
-      Array.from(word).reduce((acc, char, index) => {
-        const score = unguessedCharCounter[char] ? unguessedCharCounter[char][index] : 0;
-        return acc + score;
-      }, 0),
-    ]);
-  }
-  if (!topWords.length) {
-    return null;
-  }
-  return topWords.sort(([, a], [, b]) => b - a)[0][0];
+  return isExploring
+    ? getGuessExploring(validWords, wordPool, unguessedChars)
+    : getGuessNotExploring(validWords, unguessedChars);
 };
 
 const filterWords = (wordPool, guesses) => {
@@ -99,4 +50,57 @@ const filterWords = (wordPool, guesses) => {
   const validWords = wordPool.filter((word) => conds.every((cond) => cond(word)));
 
   return { validWords, unguessedChars };
+};
+
+const getGuessExploring = (validWords, wordPool, unguessedChars) => {
+  const unguessedCharCounter = Array.from(unguessedChars).reduce((acc, char) => ({ ...acc, [char]: 0 }), {});
+  validWords.forEach((word) => {
+    Array.from(word).forEach((char) => {
+      if (char in unguessedCharCounter) {
+        unguessedCharCounter[char]++;
+      }
+    });
+  });
+  const topUnguessedChars = Object.entries(unguessedCharCounter)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, SOLVER_BASE_SCORE)
+    .map(([char]) => char);
+  const topWords = wordPool
+    .map((word) => [
+      word,
+      [...new Set(Array.from(word))].reduce((acc, char) => {
+        const charPos = topUnguessedChars.indexOf(char);
+        const score = charPos >= 0 ? SOLVER_BASE_SCORE - charPos : 0;
+        return acc + score;
+      }, 0),
+    ])
+    .sort(([, a], [, b]) => b - a);
+  return topWords.length ? topWords[0][0] : null;
+};
+
+const getGuessNotExploring = (validWords, unguessedChars) => {
+  const unguessedCharCounter = Array.from(unguessedChars).reduce(
+    (acc, char) => ({
+      ...acc,
+      [char]: Object.fromEntries(Array.from(Array(WORD_LENGTH)).map((_, index) => [index, 0])),
+    }),
+    {}
+  );
+  validWords.forEach((word) => {
+    Array.from(word).forEach((char, index) => {
+      if (char in unguessedCharCounter) {
+        unguessedCharCounter[char][index]++;
+      }
+    });
+  });
+  const topWords = validWords
+    .map((word) => [
+      word,
+      Array.from(word).reduce((acc, char, index) => {
+        const score = unguessedCharCounter[char] ? unguessedCharCounter[char][index] : 0;
+        return acc + score;
+      }, 0),
+    ])
+    .sort(([, a], [, b]) => b - a);
+  return topWords.length ? topWords[0][0] : null;
 };

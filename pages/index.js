@@ -40,7 +40,7 @@ export default function Home() {
   const onSubmit = () => {
     if (result.length !== WORD_LENGTH) return;
     if (Array.from(result).every((char) => char === 'G')) {
-      alert(`Congrats! Guessed in ${counter + 1} attempt${counter ? 's' : ''}.`);
+      alert(`Nice! Guessed in ${counter + 1} attempt${counter ? 's' : ''}.`);
       router.reload(window.location.pathname);
       return;
     }
