@@ -2,23 +2,23 @@ import { useMemo } from 'react';
 
 import { WORD_LENGTH } from '../utils/constants';
 
-export default function Word({ word, colors, highlight }) {
+export default function Word({ word, result, highlight }) {
   const blocks = useMemo(
     () =>
       Array.from(Array(WORD_LENGTH)).map((_, index) => ({
         char: word[index] || '',
         class:
-          colors[index] === 'G'
+          result[index] === 'G'
             ? 'bg-emerald-700 border-emerald-700'
-            : colors[index] === 'Y'
+            : result[index] === 'Y'
             ? 'bg-yellow-700 border-yellow-700'
-            : colors[index] === 'B'
+            : result[index] === 'B'
             ? 'bg-zinc-700 border-zinc-700'
             : highlight
             ? 'border-slate-50'
             : 'border-slate-500',
       })),
-    [word, colors, highlight]
+    [word, result, highlight]
   );
 
   return (

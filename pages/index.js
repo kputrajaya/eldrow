@@ -40,7 +40,13 @@ export default function Home() {
   const onSubmit = () => {
     if (result.length !== WORD_LENGTH) return;
     if (Array.from(result).every((char) => char === 'G')) {
-      alert(`Congrats! Solved in ${counter + 1} attempt${counter ? 's' : ''}.`);
+      alert(`Congrats! Guessed in ${counter + 1} attempt${counter ? 's' : ''}.`);
+      router.reload(window.location.pathname);
+      return;
+    }
+    const newCounter = counter + 1;
+    if (newCounter >= ATTEMPT_COUNT) {
+      alert('Failed to guess correctly!');
       router.reload(window.location.pathname);
       return;
     }
@@ -51,7 +57,6 @@ export default function Home() {
       return;
     }
 
-    const newCounter = counter + 1;
     const newGuesses = [...guesses];
     newGuesses[newCounter] = [nextGuess, ''];
     setGuesses(newGuesses);
@@ -67,8 +72,8 @@ export default function Home() {
       <div className="max-w-screen-md h-screen px-4 mx-auto flex flex-col">
         <Header mode={mode} setMode={setModeSideEffect} />
         <div className="min-h-0 -mx-2 py-2 overflow-hidden grow flex flex-col">
-          {guesses.map((guess, index) => (
-            <Word word={guess[0]} colors={guess[1]} highlight={index === counter} key={index} />
+          {guesses.map(([guessedWord, guessResult], index) => (
+            <Word word={guessedWord} result={guessResult} highlight={index === counter} key={index} />
           ))}
         </div>
         <Keyboard result={result} setResult={setResultSideEffect} onSubmit={onSubmit} />

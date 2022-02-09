@@ -15,9 +15,10 @@ export const solve = (mode, guesses) => {
 
   // Filter valid words
   const conds = [];
-  guesses.forEach(([word, result]) => {
-    Array.from(result).forEach((resultChar, index) => {
-      const currentChar = word[index];
+  guesses.forEach(([guessedWord, guessResult]) => {
+    conds.push((word) => word !== guessedWord);
+    Array.from(guessResult).forEach((resultChar, index) => {
+      const currentChar = guessedWord[index];
       unguessedChars.delete(currentChar);
       if (resultChar === 'G') {
         conds.push((word) => word[index] === currentChar);
@@ -27,8 +28,8 @@ export const solve = (mode, guesses) => {
         correctChars.add(currentChar);
       }
     });
-    Array.from(result).forEach((resultChar, index) => {
-      const currentChar = word[index];
+    Array.from(guessResult).forEach((resultChar, index) => {
+      const currentChar = guessedWord[index];
       if (resultChar === 'B' && !correctChars.has(currentChar)) {
         conds.push((word) => word.indexOf(currentChar) === -1);
       }
