@@ -69,12 +69,14 @@ export default function Home() {
       <Head>
         <title>Eldrow - Wordle/Katla Solver</title>
       </Head>
-      <div className="max-w-screen-md h-screen px-4 mx-auto flex flex-col">
+      <div className="max-w-screen-sm h-screen px-4 mx-auto flex flex-col select-none">
         <Header mode={mode} setMode={setModeSideEffect} />
-        <div className="min-h-0 -mx-2 py-2 overflow-hidden grow flex flex-col">
-          {guesses.map(([guessedWord, guessResult], index) => (
-            <Word word={guessedWord} result={guessResult} highlight={index === counter} key={index} />
-          ))}
+        <div className="min-h-0 -mx-1 py-3 overflow-hidden grow flex justify-center items-center">
+          <div className={`max-h-full aspect-[5/6] grow flex flex-col`}>
+            {guesses.map(([guessedWord, guessResult], index) => (
+              <Word word={guessedWord} result={guessResult} highlight={index === counter} key={index} />
+            ))}
+          </div>
         </div>
         <Keyboard result={result} setResult={setResultSideEffect} onSubmit={onSubmit} />
       </div>
