@@ -1,13 +1,18 @@
 import {
   ALPHABETS,
+  ATTEMPT_COUNT,
   SOLVER_BASE_SCORE,
   SOLVER_EXPLORE_THRESHOLD,
+  SOLVER_FIRST_WORD,
   SOLVER_VALID_WORDS,
   SOLVER_WORD_POOL,
   WORD_LENGTH,
 } from '../utils/constants';
 
 export const solve = (mode, guesses) => {
+  if (!guesses[0][0]) return SOLVER_FIRST_WORD[mode];
+
+  // Get valid words
   const wordPool = SOLVER_WORD_POOL[mode];
   const { validWords, unguessedChars } = filterWords(SOLVER_VALID_WORDS[mode] || wordPool, guesses);
 
@@ -21,6 +26,36 @@ export const solve = (mode, guesses) => {
   return isExploring
     ? getGuessExploring(validWords, wordPool, unguessedChars)
     : getGuessNotExploring(validWords, unguessedChars);
+};
+
+export const bench = (mode) => {
+  console.log('Processing...');
+
+  // Process all valid words
+  const wordPool = SOLVER_WORD_POOL[mode];
+  const attemptData = (SOLVER_VALID_WORDS[mode] || wordPool).map((word) => {
+    const guesses = Array.from(Array(ATTEMPT_COUNT)).map(() => ['', '']);
+    for (let i = 0; i < ATTEMPT_COUNT; i++) {
+      const guess = solve(mode, guesses);
+      if (guess === word) return i + 1;
+
+      const result = Array.from(guess)
+        .map((char, index) => {
+          if (char === word[index]) return 'G';
+          return word.indexOf(char) >= 0 ? 'Y' : 'B';
+        })
+        .join('');
+      guesses[i] = [guess, result];
+    }
+    return null;
+  });
+
+  // Print stats
+  const successful = attemptData.filter((attempt) => attempt !== null);
+  const successRate = (100 * successful.length) / attemptData.length;
+  const attemptAvg = successful.reduce((acc, attempt) => acc + attempt) / successful.length;
+  console.log(`Success rate: ${successRate.toFixed(2)}%`);
+  console.log(`Avg. attempt: ${attemptAvg.toFixed(2)}`);
 };
 
 const filterWords = (wordPool, guesses) => {
