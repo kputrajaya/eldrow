@@ -6,7 +6,7 @@ import Header from '../components/header';
 import Keyboard from '../components/keyboard';
 import Word from '../components/word';
 import { SOLVER_FIRST_WORD, WORD_LENGTH, ATTEMPT_COUNT } from '../utils/constants';
-import { solve } from '../utils/solver';
+import { bench, solve } from '../utils/solver';
 
 export default function Home() {
   const router = useRouter();
@@ -17,11 +17,14 @@ export default function Home() {
 
   useEffect(() => {
     setMode(localStorage.getItem('mode') || Object.keys(SOLVER_FIRST_WORD)[0]);
+    window.bench = bench;
   }, []);
 
   useEffect(() => {
     const newGuesses = Array.from(Array(ATTEMPT_COUNT)).map(() => ['', '']);
-    newGuesses[0][0] = SOLVER_FIRST_WORD[mode] || '';
+    if (mode) {
+      newGuesses[0][0] = solve(mode, newGuesses);
+    }
     setGuesses(newGuesses);
     setCounter(0);
     setResult('');
