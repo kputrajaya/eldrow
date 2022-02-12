@@ -21,37 +21,42 @@ export const solve = (mode, guesses) => {
 
   // Get guess using 2 approaches
   const isExploring = validWords.length > SOLVER_EXPLORE_THRESHOLD;
-  return isExploring
-    ? getGuessExploring(validWords, wordPool, unguessedChars)
-    : getGuessNotExploring(validWords, unguessedChars);
+  return isExploring ? getGuessExploring(validWords, wordPool, unguessedChars) : getGuessNotExploring(validWords);
 };
 
-export const bench = (mode) => {
-  console.log('Processing...');
+export const bench = () => {
+  return Object.fromEntries(
+    Object.keys(SOLVER_FIRST_WORD).map((mode) => {
+      // Process all valid words
+      const wordPool = SOLVER_WORD_POOL[mode];
+      const attemptData = (SOLVER_VALID_WORDS[mode] || wordPool).map((word) => {
+        const guesses = Array.from(Array(ATTEMPT_COUNT), () => ['', '']);
+        for (let i = 0; i < ATTEMPT_COUNT; i++) {
+          const guess = solve(mode, guesses);
+          if (guess === word) return i + 1;
 
-  // Process all valid words
-  const wordPool = SOLVER_WORD_POOL[mode];
-  const attemptData = (SOLVER_VALID_WORDS[mode] || wordPool).map((word) => {
-    const guesses = Array.from(Array(ATTEMPT_COUNT), () => ['', '']);
-    for (let i = 0; i < ATTEMPT_COUNT; i++) {
-      const guess = solve(mode, guesses);
-      if (guess === word) return i + 1;
+          const result = Array.from(guess, (char, index) => {
+            if (char === word[index]) return 'G';
+            return word.indexOf(char) >= 0 ? 'Y' : 'B';
+          }).join('');
+          guesses[i] = [guess, result];
+        }
+        return null;
+      });
 
-      const result = Array.from(guess, (char, index) => {
-        if (char === word[index]) return 'G';
-        return word.indexOf(char) >= 0 ? 'Y' : 'B';
-      }).join('');
-      guesses[i] = [guess, result];
-    }
-    return null;
-  });
-
-  // Print stats
-  const successful = attemptData.filter((attempt) => attempt !== null);
-  const successRate = (100 * successful.length) / attemptData.length;
-  const attemptAvg = successful.reduce((acc, attempt) => acc + attempt) / successful.length;
-  console.log(`Success rate: ${successRate.toFixed(2)}%`);
-  console.log(`Avg. attempt: ${attemptAvg.toFixed(2)}`);
+      // Provide stats
+      const successful = attemptData.filter((attempt) => attempt !== null);
+      const successRate = (100 * successful.length) / attemptData.length;
+      const avgAttempt = successful.reduce((acc, attempt) => acc + attempt) / successful.length;
+      return [
+        mode,
+        {
+          successRate: successRate.toFixed(2),
+          avgAttempt: avgAttempt.toFixed(2),
+        },
+      ];
+    })
+  );
 };
 
 const filterWords = (wordPool, guesses) => {
