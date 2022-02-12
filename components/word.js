@@ -5,7 +5,7 @@ import { WORD_LENGTH } from '../utils/constants';
 export default function Word({ word, result, highlight }) {
   const blocks = useMemo(
     () =>
-      Array.from(Array(WORD_LENGTH)).map((_, index) => {
+      Array.from(Array(WORD_LENGTH), (_, index) => {
         const block = {
           char: word[index] || '',
           class: highlight ? 'border-zinc-50' : 'border-zinc-500',

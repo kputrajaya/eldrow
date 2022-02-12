@@ -23585,5 +23585,4 @@ export const SOLVER_FIRST_WORD = {
   wordle: 'crane',
   katla: 'teras',
 };
-export const SOLVER_EXPLORE_THRESHOLD = 5;
-export const SOLVER_BASE_SCORE = 15;
+export const SOLVER_EXPLORE_THRESHOLD = 3;

@@ -1,7 +1,6 @@
 import {
   ALPHABETS,
   ATTEMPT_COUNT,
-  SOLVER_BASE_SCORE,
   SOLVER_EXPLORE_THRESHOLD,
   SOLVER_FIRST_WORD,
   SOLVER_VALID_WORDS,
@@ -16,10 +15,9 @@ export const solve = (mode, guesses) => {
   const wordPool = SOLVER_WORD_POOL[mode];
   const { validWords, unguessedChars } = filterWords(SOLVER_VALID_WORDS[mode] || wordPool, guesses);
 
-  // Only 1 or 2 option(s) left
-  if (validWords.length <= 2) {
-    return validWords[0];
-  }
+  // Special cases of valid words length
+  if (!validWords.length) return null;
+  if (validWords.length <= 2) return validWords[0];
 
   // Get guess using 2 approaches
   const isExploring = validWords.length > SOLVER_EXPLORE_THRESHOLD;
@@ -34,17 +32,15 @@ export const bench = (mode) => {
   // Process all valid words
   const wordPool = SOLVER_WORD_POOL[mode];
   const attemptData = (SOLVER_VALID_WORDS[mode] || wordPool).map((word) => {
-    const guesses = Array.from(Array(ATTEMPT_COUNT)).map(() => ['', '']);
+    const guesses = Array.from(Array(ATTEMPT_COUNT), () => ['', '']);
     for (let i = 0; i < ATTEMPT_COUNT; i++) {
       const guess = solve(mode, guesses);
       if (guess === word) return i + 1;
 
-      const result = Array.from(guess)
-        .map((char, index) => {
-          if (char === word[index]) return 'G';
-          return word.indexOf(char) >= 0 ? 'Y' : 'B';
-        })
-        .join('');
+      const result = Array.from(guess, (char, index) => {
+        if (char === word[index]) return 'G';
+        return word.indexOf(char) >= 0 ? 'Y' : 'B';
+      }).join('');
       guesses[i] = [guess, result];
     }
     return null;
@@ -88,7 +84,7 @@ const filterWords = (wordPool, guesses) => {
 };
 
 const getGuessExploring = (validWords, wordPool, unguessedChars) => {
-  const unguessedCharCounter = Array.from(unguessedChars).reduce((acc, char) => ({ ...acc, [char]: 0 }), {});
+  const unguessedCharCounter = Object.fromEntries(Array.from(unguessedChars, (char) => [char, 0]));
   validWords.forEach((word) => {
     Array.from(word).forEach((char) => {
       if (char in unguessedCharCounter) {
@@ -96,46 +92,28 @@ const getGuessExploring = (validWords, wordPool, unguessedChars) => {
       }
     });
   });
-  const topUnguessedChars = Object.entries(unguessedCharCounter)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, SOLVER_BASE_SCORE)
-    .map(([char]) => char);
   const topWords = wordPool
     .map((word) => [
       word,
-      [...new Set(Array.from(word))].reduce((acc, char) => {
-        const charPos = topUnguessedChars.indexOf(char);
-        const score = charPos >= 0 ? SOLVER_BASE_SCORE - charPos : 0;
-        return acc + score;
-      }, 0),
+      [...new Set(Array.from(word))].reduce((acc, char) => acc + (unguessedCharCounter[char] || 0), 0),
     ])
     .sort(([, a], [, b]) => b - a);
-  return topWords.length ? topWords[0][0] : null;
+  return topWords[0][0];
 };
 
-const getGuessNotExploring = (validWords, unguessedChars) => {
-  const unguessedCharCounter = Array.from(unguessedChars).reduce(
-    (acc, char) => ({
-      ...acc,
-      [char]: Object.fromEntries(Array.from(Array(WORD_LENGTH)).map((_, index) => [index, 0])),
-    }),
-    {}
-  );
+const getGuessNotExploring = (validWords) => {
+  const charCounter = {};
   validWords.forEach((word) => {
     Array.from(word).forEach((char, index) => {
-      if (char in unguessedCharCounter) {
-        unguessedCharCounter[char][index]++;
-      }
+      charCounter[char] = charCounter[char] || new Float32Array(WORD_LENGTH);
+      charCounter[char][index]++;
     });
   });
   const topWords = validWords
     .map((word) => [
       word,
-      Array.from(word).reduce((acc, char, index) => {
-        const score = unguessedCharCounter[char] ? unguessedCharCounter[char][index] : 0;
-        return acc + score;
-      }, 0),
+      Array.from(word).reduce((acc, char, index) => acc + (charCounter[char] ? charCounter[char][index] : 0), 0),
     ])
     .sort(([, a], [, b]) => b - a);
-  return topWords.length ? topWords[0][0] : null;
+  return topWords[0][0];
 };

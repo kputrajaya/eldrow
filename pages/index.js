@@ -21,7 +21,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const newGuesses = Array.from(Array(ATTEMPT_COUNT)).map(() => ['', '']);
+    const newGuesses = Array.from(Array(ATTEMPT_COUNT), () => ['', '']);
     if (mode) {
       newGuesses[0][0] = solve(mode, newGuesses);
     }
