@@ -84,7 +84,6 @@ const filterWords = (wordPool, guesses) => {
     });
   });
   const validWords = wordPool.filter((word) => conds.every((cond) => cond(word)));
-
   return { validWords, unguessedChars };
 };
 
