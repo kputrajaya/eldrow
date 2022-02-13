@@ -12,16 +12,15 @@ export const solve = (mode, guesses) => {
   if (!guesses[0][0]) return SOLVER_FIRST_WORD[mode];
 
   // Get valid words
-  const wordPool = SOLVER_WORD_POOL[mode];
-  const { validWords, unguessedChars } = filterWords(SOLVER_VALID_WORDS[mode] || wordPool, guesses);
-
-  // Special cases of valid words length
+  const { validWords, unguessedChars } = filterWords(SOLVER_VALID_WORDS[mode], guesses);
   if (!validWords.length) return null;
   if (validWords.length <= 2) return validWords[0];
 
   // Get guess using 2 approaches
   const isExploring = validWords.length > SOLVER_EXPLORE_THRESHOLD;
-  return isExploring ? getGuessExploring(validWords, wordPool, unguessedChars) : getGuessNotExploring(validWords);
+  return isExploring
+    ? getGuessExploring(validWords, SOLVER_WORD_POOL[mode], unguessedChars)
+    : getGuessNotExploring(validWords);
 };
 
 export const bench = () => {
