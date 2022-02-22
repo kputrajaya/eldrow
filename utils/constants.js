@@ -30,7 +30,7 @@ export const ALPHABETS = [
   'z',
 ];
 
-export const SOLVER_VALID_WORDS = {
+export const SOLVER_ANSWER_POOL = {
   wordle: [
     'cigar',
     'rebut',
@@ -10600,7 +10600,7 @@ export const SOLVER_VALID_WORDS = {
   ],
 };
 export const SOLVER_WORD_POOL = {
-  wordle: SOLVER_VALID_WORDS.wordle.concat([
+  wordle: SOLVER_ANSWER_POOL.wordle.concat([
     'aahed',
     'aalii',
     'aargh',
@@ -21240,7 +21240,7 @@ export const SOLVER_WORD_POOL = {
     'zymes',
     'zymic',
   ]),
-  katla: SOLVER_VALID_WORDS.katla,
+  katla: SOLVER_ANSWER_POOL.katla,
 };
 export const SOLVER_FIRST_WORD = {
   wordle: 'crane',

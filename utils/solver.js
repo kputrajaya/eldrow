@@ -1,9 +1,9 @@
 import {
   ALPHABETS,
   ATTEMPT_COUNT,
+  SOLVER_ANSWER_POOL,
   SOLVER_EXPLORE_THRESHOLD,
   SOLVER_FIRST_WORD,
-  SOLVER_VALID_WORDS,
   SOLVER_WORD_POOL,
   WORD_LENGTH,
 } from '../utils/constants';
@@ -12,7 +12,7 @@ export const solve = (mode, guesses) => {
   if (!guesses[0][0]) return SOLVER_FIRST_WORD[mode];
 
   // Get valid words
-  const { validWords, unguessedChars } = filterWords(SOLVER_VALID_WORDS[mode], guesses);
+  const { validWords, unguessedChars } = filterWords(SOLVER_ANSWER_POOL[mode], guesses);
   if (!validWords.length) return null;
   if (validWords.length <= 2) return validWords[0];
 
@@ -28,7 +28,7 @@ export const bench = () => {
     Object.keys(SOLVER_FIRST_WORD).map((mode) => {
       // Process all valid words
       const wordPool = SOLVER_WORD_POOL[mode];
-      const attemptData = (SOLVER_VALID_WORDS[mode] || wordPool).map((word) => {
+      const attemptData = (SOLVER_ANSWER_POOL[mode] || wordPool).map((word) => {
         const guesses = Array.from(Array(ATTEMPT_COUNT), () => ['', '']);
         for (let i = 0; i < ATTEMPT_COUNT; i++) {
           const guess = solve(mode, guesses);
