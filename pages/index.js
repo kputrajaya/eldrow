@@ -77,7 +77,7 @@ export default function Home() {
         <div className="min-h-0 -mx-1 py-3 overflow-hidden grow flex justify-center items-center">
           <div className={`max-h-full aspect-[5/6] grow flex flex-col`}>
             {guesses.map(([guessedWord, guessResult], index) => (
-              <Word word={guessedWord} result={guessResult} highlight={index === counter} key={index} />
+              <Word word={guessedWord} result={guessResult} highlight={index === counter} key={guessedWord} />
             ))}
           </div>
         </div>
