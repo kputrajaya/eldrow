@@ -16,7 +16,7 @@ export default function Home() {
   const [result, setResult] = useState('');
 
   useEffect(() => {
-    setMode(localStorage.getItem('mode') || Object.keys(SOLVER_FIRST_WORD)[0]);
+    setMode(localStorage.getItem('mode') || 'wordle');
     window.bench = bench;
   }, []);
 
