@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import Header from '../components/header';
 import Keyboard from '../components/keyboard';
 import Word from '../components/word';
-import { SOLVER_FIRST_WORD, WORD_LENGTH, ATTEMPT_COUNT } from '../utils/constants';
+import { ATTEMPT_COUNT, DEFAULT_MODE, WORD_LENGTH } from '../utils/constants';
 import { bench, solve } from '../utils/solver';
 
 export default function Home() {
@@ -16,7 +16,7 @@ export default function Home() {
   const [result, setResult] = useState('');
 
   useEffect(() => {
-    setMode(localStorage.getItem('mode') || 'wordle');
+    setMode(localStorage.getItem('mode') || DEFAULT_MODE);
     window.bench = bench;
   }, []);
 

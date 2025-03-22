@@ -30,6 +30,8 @@ export const ALPHABETS = [
   'z',
 ];
 
+export const DEFAULT_MODE = 'wordle';
+
 export const SOLVER_ANSWER_POOL = {
   wordle: [
     'cigar',
