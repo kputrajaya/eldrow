@@ -1,6 +1,6 @@
 # Eldrow
 
-A Wordle/Katla solver. 
+A Wordle/Katla solver.
 
 ## Built With
 
